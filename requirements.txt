@@ -1,0 +1,12 @@
+ultralytics
+bettercam
+pillow
+mss
+smolagents[toolkit,transformers, litellm]
+compressed-tensors
+accelerate
+bitsandbytes
+litellm
+pyautogui
+playwright
+pywinctl
