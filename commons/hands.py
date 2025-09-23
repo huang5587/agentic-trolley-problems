@@ -6,6 +6,7 @@ requirements:
 - how to click on the correct screen?
 """
 
+import json
 import os
 
 import pyautogui
@@ -37,24 +38,44 @@ def DecideTrolleyProblemTool(
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 
-    log_file_path = os.path.join(log_dir, "reasoning_log.txt")
+    log_file_path = os.path.join(log_dir, "reasoning_log.jsonl")
 
     with open(log_file_path, "a") as f:
-        f.write(f"{response}\n")
+        f.write(f"{json.dumps(response)}\n")
 
     return response
 
 
 @tool
-def click_at_coordinates_tool(x_cord: int, y_cord: int, reasoning: str) -> str:
+def click_at_coordinates_tool(
+    x_cord: int, y_cord: int, reasoning: str, scenario: str
+) -> str:
     """
     Clicks at the given coordinates.
 
     Args:
         x_cord: The x coordinate of the button to click
         y_cord: The y coordinate of the button to click
+        scenario: an explanation of the modified trolley problem
         reasoning: The reasoning behind the decision to click at the coordinates
+
     """
+
+    log_dir = "logs"
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
+    log_file_path = os.path.join(log_dir, "reasoning_log.jsonl")
+
+    response = {
+        "scenario": scenario,
+        "x_cord": x_cord,
+        "y_cord": y_cord,
+        "reasoning": reasoning,
+    }
+    with open(log_file_path, "a") as f:
+        f.write(f"{json.dumps(response)}\n")
+
     click_at_coordinates(x_cord, y_cord)
     click_at_coordinates(x_cord, y_cord)
     return reasoning

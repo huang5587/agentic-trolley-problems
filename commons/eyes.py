@@ -137,22 +137,11 @@ async def _run_with_playwright(enable_saving: bool = False):
 async def _run_with_clicking(enable_saving: bool = False):
     OR_KEY = os.environ["OPENROUTER_API_KEY"]
     model = LiteLLMModel(model_id="openrouter/" + MODELS[3])
-    prompt = """
-    You are solving a modified trolley problem. Based off the situation, you must decide between pulling the lever or doing nothing.
 
-    Your input image will depict the modified trolley problem, with an (x,y) coordinate overlay.
-
-    To make your decision, give the click_at_coordinates_tool the coordinates that overlay over the button that corresponds to your decision.
-
-    Your coordinate response must be based off the coordinate overlay in the image.
-    The tool will then click on the button, causing the trolley to go left or right.
-
-    If the input image has a button that says "Next", you must click on it by returning its (x,y) coordinates to click_at_coordinates_tool
-    """
     while True:
         await asyncio.sleep(4)
         image = _screenshot_monitor(enable_saving)
-        think_and_click(model, prompt, image)
+        think_and_click(model, image)
 
 
 async def run(enable_saving: bool = False, enable_clicking: bool = False):
