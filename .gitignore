@@ -1,3 +1,5 @@
 captures/
 __pycache__/
 yolo11n.pt
+.env
+logs/
