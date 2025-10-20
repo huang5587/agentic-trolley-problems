@@ -10,3 +10,4 @@ litellm
 pyautogui
 playwright
 pywinctl
+openai

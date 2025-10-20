@@ -1,17 +1,18 @@
-from enum import Enum
+import os
 
+from dotenv import load_dotenv
 
-class TrolleyProblemDecision(Enum):
-    Pull_lever = "Pull the lever"
-    Do_nothing = "Do nothing"
+load_dotenv()
 
-
+API_KEY = os.environ.get("OPENROUTER_API_KEY")
+API_BASE_URL = "https://openrouter.ai/api/v1"
 MODELS = [
-    "moonshotai/kimi-vl-a3b-thinking:free",
-    "openrouter/sonoma-dusk-alpha",
-    "google/gemini-2.5-pro",
     "google/gemini-2.5-flash",
-    "openrouter/sonoma-sky-alpha",
+    "openai/gpt-5-mini",
+    "qwen/qwen3-vl-235b-a22b-instruct",
+    "anthropic/claude-sonnet-4.5",
 ]
 
-URL = "https://neal.fun/absurd-trolley-problems/"
+ASSISTED_MODEL = "openai/gpt-5-mini"
+UNASSISTED_MODEL = "google/gemini-2.5-pro"
+GAME_URL = "https://neal.fun/absurd-trolley-problems/"
