@@ -3,3 +3,5 @@ __pycache__/
 yolo11n.pt
 .env
 logs/
+.gitignore
+.ds_store
