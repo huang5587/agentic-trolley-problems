@@ -15,12 +15,11 @@ from commons.utils import _get_pw_window_coords, _save_image, _screenshot_window
 
 load_dotenv()
 
-# Constants for selectors and sleep times to avoid magic numbers
-WAIT_INTERVAL = 4
+# Constants
+WAIT_INTERVAL = 3
 DECISION_BUTTON_SELECTOR = 'button.action:has-text("{decision}")'
 NEXT_BUTTON_SELECTOR = ".action-next"
 
-# Tool definition for the OpenAI API
 DECIDE_TROLLEY_PROBLEM_TOOL: ChatCompletionToolParam = {
     "type": "function",
     "function": {
@@ -178,7 +177,7 @@ class AssistedAgent:
                             function_name = tool_call.function.name
                             function_to_call = available_functions[function_name]
                             function_args = json.loads(tool_call.function.arguments)
-                            print("function_args:", function_args)
+                            # print("@@@ function_args:", function_args)
                             self._save_decision_to_log(function_args)
                             decision = function_args.get("decision")
                             tasks.append(function_to_call(**function_args))

@@ -16,7 +16,7 @@ class UnassistedAgent:
 
     def _screenshot_monitor(self) -> Image.Image:
         with mss.mss() as sct:
-            print(sct.monitors)
+            # print(sct.monitors)
             monitor = sct.monitors[1]
             sct_img = sct.grab(monitor)
             img = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")
@@ -28,7 +28,7 @@ class UnassistedAgent:
 
     def _draw_overlay(self, img):
         draw = ImageDraw.Draw(img)
-        grid_spacing = 137
+        grid_spacing = 100
         font = ImageFont.load_default(size=13)
         line_color = (137, 137, 137)  # grey gridlines
         text_color = (255, 0, 0)  # red text
@@ -100,7 +100,11 @@ class UnassistedAgent:
         return result
 
     async def run(self):
-        while True:
-            await asyncio.sleep(4)
+        running = True
+        while running:
+            await asyncio.sleep(2.5)
             image = self._screenshot_monitor()
-            self.think_and_click(image)
+            result = self.think_and_click(image)
+            output_str = str(result)
+            if "end_game_tool" in output_str and "finished=True" in output_str:
+                running = False
