@@ -20,6 +20,24 @@ WAIT_INTERVAL = 3
 DECISION_BUTTON_SELECTOR = 'button.action:has-text("{decision}")'
 NEXT_BUTTON_SELECTOR = ".action-next"
 
+END_GAME_TOOL: ChatCompletionToolParam = {
+    "type": "function",
+    "function": {
+        "name": "end_game",
+        "description": "Ends the game.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "finished": {
+                    "type": "boolean",
+                    "description": "True if the game has ended, false otherwise.",
+                },
+            },
+            "required": ["finished"],
+        },
+    },
+}
+
 DECIDE_TROLLEY_PROBLEM_TOOL: ChatCompletionToolParam = {
     "type": "function",
     "function": {
@@ -120,7 +138,8 @@ class AssistedAgent:
             )
             await page.goto(GAME_URL)
 
-            while True:
+            game_over = False
+            while not game_over:
                 await asyncio.sleep(WAIT_INTERVAL)
                 coords = _get_pw_window_coords()
                 if not coords:
@@ -151,17 +170,14 @@ class AssistedAgent:
                         ],
                     },
                 ]
-                tools = [DECIDE_TROLLEY_PROBLEM_TOOL]
+                tools = [DECIDE_TROLLEY_PROBLEM_TOOL, END_GAME_TOOL]
                 decision = None
                 try:
                     response = await self.client.chat.completions.create(
                         model=self.model_name,
                         messages=messages,
                         tools=tools,
-                        tool_choice={
-                            "type": "function",
-                            "function": {"name": "decide_trolley_problem"},
-                        },
+                        tool_choice="auto",
                     )
 
                     response_message = response.choices[0].message
@@ -169,6 +185,7 @@ class AssistedAgent:
                     if tool_calls:
                         available_functions = {
                             "decide_trolley_problem": self._decide_trolley_problem,
+                            "end_game": self._end_game,
                         }
                         tasks = []
                         for tool_call in tool_calls:
@@ -177,9 +194,16 @@ class AssistedAgent:
                             function_name = tool_call.function.name
                             function_to_call = available_functions[function_name]
                             function_args = json.loads(tool_call.function.arguments)
-                            # print("@@@ function_args:", function_args)
+                            print("output:", function_args)
                             self._save_decision_to_log(function_args)
                             decision = function_args.get("decision")
+                            if function_name == "end_game":
+                                game_over = True
+                                print(
+                                    "End game status:",
+                                    game_over,
+                                    " - Shutting down agent.",
+                                )
                             tasks.append(function_to_call(**function_args))
 
                         await asyncio.gather(*tasks)
@@ -189,9 +213,12 @@ class AssistedAgent:
 
                 if decision:
                     await page.click(DECISION_BUTTON_SELECTOR.format(decision=decision))
+                if not game_over:
+                    await page.locator(selector=NEXT_BUTTON_SELECTOR).click()  # type: ignore
+                else:
+                    break
 
-                await page.locator(selector=NEXT_BUTTON_SELECTOR).click()  # type: ignore
-
+    # tool functions
     async def _decide_trolley_problem(
         self, scenario: str, reasoning: str, decision: str
     ) -> str:
@@ -213,3 +240,15 @@ class AssistedAgent:
             "reasoning": reasoning,
         }
         return json.dumps(response)
+
+    async def _end_game(self, finished: bool) -> bool:
+        """
+        Ends the game.
+
+        Args:
+            finished: True if the game has ended, false otherwise.
+
+        Returns:
+            True if the game has ended, false otherwise.
+        """
+        return finished

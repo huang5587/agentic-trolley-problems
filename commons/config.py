@@ -13,6 +13,8 @@ MODELS = [
 ]
 
 
-ASSISTED_MODEL = "openai/gpt-5"
+# ASSISTED_MODEL = "openai/gpt-5"
+ASSISTED_MODEL = "google/gemini-2.5-flash"
+
 UNASSISTED_MODEL = "google/gemini-2.5-pro"
 GAME_URL = "https://neal.fun/absurd-trolley-problems/"
