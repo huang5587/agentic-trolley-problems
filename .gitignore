@@ -2,7 +2,6 @@ captures/
 __pycache__/
 yolo11n.pt
 .env
-logs/
 .DS_Store
 .DS_Store?
 ._*
