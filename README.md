@@ -1,4 +1,4 @@
-# Project Overview
+# Agentically Solving Absurd Trolley Problems
 
 This repo contains 2 agentic workflows that autonomously play through the the [Absurd Trolley Problems](https://neal.fun/absurd-trolley-problems/) web-game on neal.fun.
 Inspired by [AI plays Pokemon](https://github.com/clambro/ai-plays-pokemon/blob/main/docs/philosophy.md) and [LLM Werewolf](https://werewolf.foaster.ai/), I created this Trolley Problem Agent to explore 2 things:
