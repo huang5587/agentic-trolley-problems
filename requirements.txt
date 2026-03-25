@@ -6,7 +6,7 @@ smolagents[toolkit,transformers, litellm]
 compressed-tensors
 accelerate
 bitsandbytes
-litellm
+litellm==1.77.1
 pyautogui
 playwright
 pywinctl
